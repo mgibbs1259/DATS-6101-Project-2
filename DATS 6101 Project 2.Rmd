@@ -1,0 +1,13 @@
+---
+title: "Project 2"
+course: "DATS 6101 Introduction to Data Science"
+authors: "Mary Gibbs and Peter Riley"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+
+```
+
