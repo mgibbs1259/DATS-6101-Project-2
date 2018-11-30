@@ -1,2 +1,3 @@
 # DATS-6101-Project-2
-Hey, this is Peter just testing things out ha
+Data Science Group Project 2
+Mary Gibbs and Peter Riley
