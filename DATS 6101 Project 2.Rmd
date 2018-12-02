@@ -35,5 +35,8 @@ df$urgency <- as.factor(df$urgency)
 str(df)
 ```
 
+Exploratory Data Analysis
+```{r}
 
+```
 
