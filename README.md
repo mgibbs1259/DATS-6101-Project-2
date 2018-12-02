@@ -1,3 +1,6 @@
 # DATS-6101-Project-2
-Data Science Group Project 2
-Mary Gibbs and Peter Riley
+## Authors: Mary Gibbs and Peter Riley
+# Objective
+To build a model involving news data and market data to predict stock movements. 
+# Data Source
+[Data](https://www.kaggle.com/c/two-sigma-financial-news/data)
