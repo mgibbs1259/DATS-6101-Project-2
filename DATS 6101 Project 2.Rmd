@@ -7,7 +7,33 @@ editor_options:
   chunk_output_type: inline
 ---
 
+Packages
 ```{r}
-
+library(ResourceSelection)
+library(pROC)
+library(pscl)
+library(ISLR)
+library(dplyr)
+library(ROCR)
+library(bestglm)
+library(openintro)
 ```
+
+Data 
+```{r}
+#read in data 
+df <- read.csv('data/data.csv') 
+#remove X column
+df$X <- NULL 
+#check data
+str(df)
+#change data types
+df$binary_result <- as.factor(df$binary_result)
+df$sentimentClass <- as.factor(df$sentimentClass)
+df$urgency <- as.factor(df$urgency)
+#check data
+str(df)
+```
+
+
 
