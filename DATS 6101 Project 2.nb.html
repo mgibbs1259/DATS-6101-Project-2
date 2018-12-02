@@ -176,13 +176,48 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
+<p>Packages</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShSZXNvdXJjZVNlbGVjdGlvbilcbmxpYnJhcnkocFJPQylcbmxpYnJhcnkocHNjbClcbmxpYnJhcnkoSVNMUilcbmxpYnJhcnkoZHBseXIpXG5saWJyYXJ5KFJPQ1IpXG5saWJyYXJ5KGJlc3RnbG0pXG5saWJyYXJ5KG9wZW5pbnRybylcbmBgYCJ9 -->
+<pre class="r"><code>library(ResourceSelection)
+library(pROC)
+library(pscl)
+library(ISLR)
+library(dplyr)
+library(ROCR)
+library(bestglm)
+library(openintro)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Data</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3JlYWQgaW4gZGF0YSBcbmRmIDwtIHJlYWQuY3N2KCdkYXRhL2RhdGEuY3N2JykgXG4jcmVtb3ZlIFggY29sdW1uXG5kZiRYIDwtIE5VTEwgXG4jY2hlY2sgZGF0YVxuc3RyKGRmKVxuI2NoYW5nZSBkYXRhIHR5cGVzXG5kZiRiaW5hcnlfcmVzdWx0IDwtIGFzLmZhY3RvcihkZiRiaW5hcnlfcmVzdWx0KVxuZGYkc2VudGltZW50Q2xhc3MgPC0gYXMuZmFjdG9yKGRmJHNlbnRpbWVudENsYXNzKVxuZGYkdXJnZW5jeSA8LSBhcy5mYWN0b3IoZGYkdXJnZW5jeSlcbiNjaGVjayBkYXRhXG5zdHIoZGYpXG5gYGAifQ== -->
+<pre class="r"><code>#read in data 
+df &lt;- read.csv('data/data.csv') 
+#remove X column
+df$X &lt;- NULL 
+#check data
+str(df)
+#change data types
+df$binary_result &lt;- as.factor(df$binary_result)
+df$sentimentClass &lt;- as.factor(df$sentimentClass)
+df$urgency &lt;- as.factor(df$urgency)
+#check data
+str(df)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Exploratory Data Analysis</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJvamVjdCAyIgpjb3Vyc2U6ICJEQVRTIDYxMDEgSW50cm9kdWN0aW9uIHRvIERhdGEgU2NpZW5jZSIKYXV0aG9yczogIk1hcnkgR2liYnMgYW5kIFBldGVyIFJpbGV5IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKZWRpdG9yX29wdGlvbnM6IAogIGNodW5rX291dHB1dF90eXBlOiBpbmxpbmUKLS0tCgpgYGB7cn0KCmBgYAoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJvamVjdCAyIgpjb3Vyc2U6ICJEQVRTIDYxMDEgSW50cm9kdWN0aW9uIHRvIERhdGEgU2NpZW5jZSIKYXV0aG9yczogIk1hcnkgR2liYnMgYW5kIFBldGVyIFJpbGV5IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKZWRpdG9yX29wdGlvbnM6IAogIGNodW5rX291dHB1dF90eXBlOiBpbmxpbmUKLS0tCgpQYWNrYWdlcwpgYGB7cn0KbGlicmFyeShSZXNvdXJjZVNlbGVjdGlvbikKbGlicmFyeShwUk9DKQpsaWJyYXJ5KHBzY2wpCmxpYnJhcnkoSVNMUikKbGlicmFyeShkcGx5cikKbGlicmFyeShST0NSKQpsaWJyYXJ5KGJlc3RnbG0pCmxpYnJhcnkob3BlbmludHJvKQpgYGAKCkRhdGEgCmBgYHtyfQojcmVhZCBpbiBkYXRhIApkZiA8LSByZWFkLmNzdignZGF0YS9kYXRhLmNzdicpIAojcmVtb3ZlIFggY29sdW1uCmRmJFggPC0gTlVMTCAKI2NoZWNrIGRhdGEKc3RyKGRmKQojY2hhbmdlIGRhdGEgdHlwZXMKZGYkYmluYXJ5X3Jlc3VsdCA8LSBhcy5mYWN0b3IoZGYkYmluYXJ5X3Jlc3VsdCkKZGYkc2VudGltZW50Q2xhc3MgPC0gYXMuZmFjdG9yKGRmJHNlbnRpbWVudENsYXNzKQpkZiR1cmdlbmN5IDwtIGFzLmZhY3RvcihkZiR1cmdlbmN5KQojY2hlY2sgZGF0YQpzdHIoZGYpCmBgYAoKRXhwbG9yYXRvcnkgRGF0YSBBbmFseXNpcwpgYGB7cn0KCmBgYAoK</div>
 
 
 
