@@ -1,0 +1,164 @@
+---
+title: "Using News and Market Data to Predict Stock Movements"
+course: "DATS 6101 Introduction to Data Science"
+authors: "Mary Gibbs and Peter Riley"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+Packages
+```{r}
+library(bestglm)
+library(car)
+library(caret)
+library(corrplot)
+library(dplyr)
+library(ggplot2)
+library(ISLR)
+library(pROC)
+library(pscl)
+library(ResourceSelection)
+library(ROCR)
+library(verification)
+```
+
+Data 
+```{r}
+#read in data 
+df <- read.csv("data/data.csv") 
+#remove X column
+df$X <- NULL 
+#check data
+str(df)
+#change data types
+df$binary_result <- as.factor(df$binary_result)
+df$sentimentClass <- as.factor(df$sentimentClass)
+df$urgency <- as.factor(df$urgency)
+#check data
+str(df)
+head(df)
+```
+
+Multicollinearity
+```{r}
+#correlation matrix
+dfCorrMatrix <- cor(df[, c(4:7, 11:13, 15:18)], method = "pearson")
+#correlation plot 
+corrplot(dfCorrMatrix, method = "square", addCoef.col = "black", number.cex = 7/ncol(df))
+#create df w/o highly correlated features
+dfLogModel <- df[, c(4:5, 8:16)]
+```
+
+Test/Train
+```{r}
+#get 80% train
+train <- dfLogModel[1:11088, ]
+#get 20% test
+test <- dfLogModel[11089:13860, ]
+```
+
+Full Logistic Regression Model 
+```{r}
+#full model 
+fullModel <- glm(binary_result ~ volume + open + provider + sentimentClass + sentimentNegative + sentimentNeutral + sentimentPositive + urgency + firstMentionSentence + bodySize, family = binomial(link = "logit"), data = train)
+
+#full model summary
+summary(fullModel)
+#volume and open are statistically significant (p-value < 0.05), contribute to model
+#null deviance is 15345 and residual deviance is 15233, terrible reduction
+#AIC is 15281
+
+#full model VIF
+vif(fullModel)
+#VIF < 5, no multicollinearity issues
+```
+
+Best Logistic Regression Model
+```{r}
+#best model - commented out due to run time
+#colnames(train) <- c("volume", "open", "y", "provider", "sentimentClass", "sentimentNegative", "sentimentNeutral", "sentimentPositive", "urgency", "firstMentionSentence", "bodySize")
+#bestTrain <- train[, c("volume", "open", "provider", "sentimentClass", "sentimentNegative", "sentimentNeutral", "sentimentPositive", "urgency", "firstMentionSentence", "bodySize", "y")]
+#logres.bglm <- bestglm(Xy = bestTrain, family = binomial, IC = "AIC", method = "exhaustive")
+#logres.bglm$BestModels
+
+#best model 
+bestModel <- glm(binary_result ~ volume + open + provider + sentimentNegative + firstMentionSentence, family = binomial(link = "logit"), data = train)
+
+#best model summary
+summary(bestModel)
+#volume and open are statistically significant (p-value < 0.05), contribute to model
+#null deviance is 15345 and residual deviance is 15235, terrible reduction
+#AIC is 15271
+
+#best model VIF
+vif(bestModel)
+#VIF < 5, no multicollinearity issues 
+```
+
+Prediction
+```{r}
+#best model predicition
+bestModelPrediction <- predict(bestModel, newdata = test, type = "response")
+#CHECK THIS PART!, best model prediction probability distribution 
+data.frame(predictions = bestModelPrediction) %>%
+  ggplot(aes(x = predictions)) + 
+  geom_histogram(bins = 50) +
+  labs(title = "histogram of predictions") +
+  theme_bw()
+```
+
+Hit Rate
+```{r}
+#best model hit rate
+bestModelPerLike <- ifelse(bestModelPrediction > 0.5, 1, 0)
+bestModelHitRate <- mean(bestModelPerLike == test$binary_result)
+bestModelHitRate
+#best model hit rate is 47.44%, terrible
+```
+
+ROC Curve
+```{r}
+#best model ROC curve
+bestModelROCpred <- prediction(bestModelPrediction, test$binary_result)
+bestModelROCperf <- performance(bestModelROCpred, measure = "tpr", x.measure = "fpr")
+plot(bestModelROCperf, xlab = "false positive rate", ylab = "true positive rate")
+#best ROC curve is terrible
+
+#best model AUC
+bestModelAUC <- performance(bestModelROCpred, measure = "auc")
+bestModelAUC
+#model 2 AUC is 0.4967, terrible
+```
+
+Decision Tree
+```{r}
+library(tree)
+library(rpart)
+library(rpart.plot)
+library(Metrics)
+library(rattle)
+library(RColorBrewer)
+
+
+#build model
+tree.results <- rpart(binary_result ~ time+sentimentClass+sentimentNegative+sentimentNeutral+sentimentPositive+bodySize+wordCount, data = training, control= rpart.control(cp=.005), method = "class")
+
+plot(tree.results, uniform=TRUE, margin=.05)
+text(tree.results)
+summary(tree.results)
+# Draw the decision tree using fancyRpart and text tree
+fancyRpartPlot(tree.results)
+
+plot(tree.results, uniform=TRUE, margin=.05)
+text(tree.results)
+#make predictions
+tree_pred<- predict(tree.results, newdata=dfTest, type="class")
+
+#misclassification table (the (0, 0) (1,1) diagonals are the correct classifications)
+with(dfTest, table(tree_pred, binary_result))
+
+#using the table, we'll find the error 
+error_value<-  (1021+629)/ 2771
+error_value
+```
