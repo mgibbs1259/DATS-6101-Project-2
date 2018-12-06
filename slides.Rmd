@@ -1,0 +1,110 @@
+---
+title: "Using News and Market Data for to Predict Stock Movements"
+author: "Mary Gibbs and Peter Riley"
+date: "12/5/2018"
+output: ioslides_presentation
+editor_options: 
+  chunk_output_type: console
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+##Question
+
+**Does news, including positive or negative coverage, and market data predict whether a company's stock will increase or decrease within a day?**
+
+##Data Source 
+```{r, out.width="75%"}
+library(knitr)
+
+knitr::include_graphics('Data-Source.png')
+
+```
+
+##Data {.smaller}
+```{r, comment = ""}
+#read in data 
+library(knitr)
+library(kableExtra)
+df <- read.csv('data/data.csv') 
+#remove X column
+df$X <- NULL 
+#check data
+#str(df)
+#change data types
+df$binary_result <- as.factor(df$binary_result)
+df$sentimentClass <- as.factor(df$sentimentClass)
+df$urgency <- as.factor(df$urgency)
+#check data
+head(df)%>%
+kable()%>%
+kable_styling(c("striped", "hover", "condensed", "responsive")) %>%
+scroll_box(width = "100%")
+
+```
+##News EDA {.smaller}
+```{r, warning= F}
+library(knitr)
+library(kableExtra)
+
+```
+##Market EDA
+
+##Logistic Regression 
+```{r}
+
+```
+##Logistic Regression Hit Rate and ROC
+
+##Decision Tree Hit Rate and ROC
+```{r}
+
+```
+
+```{r}
+
+
+```
+##Conclusion
+```{r}
+
+```
+
+```
+
+```
+
+```
+
+
+
+```
+
+
+
+```{r}
+
+```
+
+
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
