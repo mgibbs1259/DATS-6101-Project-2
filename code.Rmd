@@ -16,10 +16,16 @@ library(corrplot)
 library(dplyr)
 library(ggplot2)
 library(ISLR)
+library(Metrics)
 library(pROC)
 library(pscl)
+library(rattle)
+library(RColorBrewer)
 library(ResourceSelection)
+library(rpart)
+library(rpart.plot)
 library(ROCR)
+library(tree)
 library(verification)
 ```
 
@@ -133,14 +139,6 @@ bestModelAUC
 
 Decision Tree
 ```{r}
-library(tree)
-library(rpart)
-library(rpart.plot)
-library(Metrics)
-library(rattle)
-library(RColorBrewer)
-
-
 #build model
 tree.results <- rpart(binary_result ~ time+sentimentClass+sentimentNegative+sentimentNeutral+sentimentPositive+bodySize+wordCount, data = training, control= rpart.control(cp=.005), method = "class")
 
