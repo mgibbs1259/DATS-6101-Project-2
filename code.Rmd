@@ -16,6 +16,7 @@ library(corrplot)
 library(dplyr)
 library(ggplot2)
 library(ISLR)
+library(MASS)
 library(Metrics)
 library(pROC)
 library(pscl)
@@ -80,61 +81,49 @@ vif(fullModel)
 #VIF < 5, no multicollinearity issues
 ```
 
-Best Logistic Regression Model
+Stepwise Logistic Regression Model
 ```{r}
-#best model - commented out due to run time
-#colnames(train) <- c("volume", "open", "y", "provider", "sentimentClass", "sentimentNegative", "sentimentNeutral", "sentimentPositive", "urgency", "firstMentionSentence", "bodySize")
-#bestTrain <- train[, c("volume", "open", "provider", "sentimentClass", "sentimentNegative", "sentimentNeutral", "sentimentPositive", "urgency", "firstMentionSentence", "bodySize", "y")]
-#logres.bglm <- bestglm(Xy = bestTrain, family = binomial, IC = "AIC", method = "exhaustive")
-#logres.bglm$BestModels
+#stepwise model
+stepModel <- fullModel %>% stepAIC(trace = TRUE)
 
-#best model 
-bestModel <- glm(binary_result ~ volume + open + provider + sentimentNegative + firstMentionSentence, family = binomial(link = "logit"), data = train)
-
-#best model summary
-summary(bestModel)
+#stepwise model summary
+summary(stepModel)
 #volume and open are statistically significant (p-value < 0.05), contribute to model
-#null deviance is 15345 and residual deviance is 15235, terrible reduction
+#null deviance is 15345 and residual deviance is 15237, terrible reduction
 #AIC is 15271
 
-#best model VIF
-vif(bestModel)
-#VIF < 5, no multicollinearity issues 
+#stepwise model VIF
+vif(stepModel)
+#VIF < 5, no multicollinearity issues
 ```
 
 Prediction
 ```{r}
-#best model predicition
-bestModelPrediction <- predict(bestModel, newdata = test, type = "response")
-#CHECK THIS PART!, best model prediction probability distribution 
-data.frame(predictions = bestModelPrediction) %>%
-  ggplot(aes(x = predictions)) + 
-  geom_histogram(bins = 50) +
-  labs(title = "histogram of predictions") +
-  theme_bw()
+#stepwise model predicition
+stepModelPrediction <- predict(stepModel, newdata = test, type = "response")
 ```
 
 Hit Rate
 ```{r}
-#best model hit rate
-bestModelPerLike <- ifelse(bestModelPrediction > 0.5, 1, 0)
-bestModelHitRate <- mean(bestModelPerLike == test$binary_result)
-bestModelHitRate
-#best model hit rate is 47.44%, terrible
+#stepwise model hit rate
+stepModelPerLike <- ifelse(stepModelPrediction > 0.5, 1, 0)
+stepModelHitRate <- mean(stepModelPerLike == test$binary_result)
+stepModelHitRate
+#stepwise model hit rate is 47.40%, terrible
 ```
 
 ROC Curve
 ```{r}
-#best model ROC curve
-bestModelROCpred <- prediction(bestModelPrediction, test$binary_result)
-bestModelROCperf <- performance(bestModelROCpred, measure = "tpr", x.measure = "fpr")
-plot(bestModelROCperf, xlab = "false positive rate", ylab = "true positive rate")
-#best ROC curve is terrible
+#stepwise model ROC curve
+stepModelROCpred <- prediction(stepModelPrediction, test$binary_result)
+stepModelROCperf <- performance(stepModelROCpred, measure = "tpr", x.measure = "fpr")
+plot(stepModelROCperf, xlab = "false positive rate", ylab = "true positive rate")
+#stepwise model ROC curve is terrible
 
-#best model AUC
+#stepwise model AUC
 bestModelAUC <- performance(bestModelROCpred, measure = "auc")
 bestModelAUC
-#model 2 AUC is 0.4967, terrible
+#stepwise model AUC is 0.4967, terrible
 ```
 
 Decision Tree
