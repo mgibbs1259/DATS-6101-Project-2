@@ -7,6 +7,18 @@ editor_options:
   chunk_output_type: console
 ---
 
+----------------
+Project Overview
+----------------
+
+Research Question: Can a combinaton of news data and market data predict whether a company's stock will increase or decrease within a day?
+
+Data Source: https://www.kaggle.com/c/two-sigma-financial-news/data
+
+----------------
+Data Preparation
+----------------
+
 Packages
 ```{r}
 library(bestglm)
@@ -18,11 +30,13 @@ library(ggplot2)
 library(ISLR)
 library(MASS)
 library(Metrics)
+library(MLmetrics)
 library(pROC)
 library(pscl)
 library(rattle)
 library(RColorBrewer)
 library(ResourceSelection)
+library(rattle)
 library(rpart)
 library(rpart.plot)
 library(ROCR)
@@ -30,7 +44,7 @@ library(tree)
 library(verification)
 ```
 
-Data 
+Clean Data
 ```{r}
 #read in data 
 df <- read.csv("data/data.csv") 
@@ -57,6 +71,10 @@ corrplot(dfCorrMatrix, method = "square", addCoef.col = "black", number.cex = 7/
 dfLogModel <- df[, c(4:5, 8:16)]
 ```
 
+------
+Models
+------
+
 Test/Train
 ```{r}
 #get 80% train
@@ -64,6 +82,9 @@ train <- dfLogModel[1:11088, ]
 #get 20% test
 test <- dfLogModel[11089:13860, ]
 ```
+
+Logistic Regression
+-------------------
 
 Full Logistic Regression Model 
 ```{r}
@@ -97,13 +118,13 @@ vif(stepModel)
 #VIF < 5, no multicollinearity issues
 ```
 
-Prediction
+Stepwise Logistic Regression Model Prediction
 ```{r}
 #stepwise model predicition
 stepModelPrediction <- predict(stepModel, newdata = test, type = "response")
 ```
 
-Hit Rate
+Stepwise Logistic Regression Model Hit Rate
 ```{r}
 #stepwise model hit rate
 stepModelPerLike <- ifelse(stepModelPrediction > 0.5, 1, 0)
@@ -112,7 +133,7 @@ stepModelHitRate
 #stepwise model hit rate is 47.40%, terrible
 ```
 
-ROC Curve
+Stepwise Logistic Regression Model ROC Curve
 ```{r}
 #stepwise model ROC curve
 stepModelROCpred <- prediction(stepModelPrediction, test$binary_result)
@@ -127,43 +148,36 @@ stepModelAUC
 ```
 
 Decision Tree
+-------------
+
+Decision Tree
 ```{r}
-#load in necessary packages
-library(tree)
-library(rpart)
-library(rpart.plot)
-library(Metrics)
-library(rattle)
-library(RColorBrewer)
-
-
-#build model
+#decision tree
 set.seed(1)
-tree.results <- rpart(binary_result ~ open+sentimentNegative+sentimentNeutral+sentimentPositive+bodySize+wordCount, data = training, control= rpart.control(maxdepth = 6), parms= list(split= 'gini'), method = "class")
+tree <- rpart(binary_result ~ volume + open + provider + sentimentClass + sentimentNegative + sentimentNeutral + sentimentPositive + urgency + firstMentionSentence + bodySize, data = train, control = rpart.control(maxdepth = 6), method = "class")
 
-View(tree.results$cptable)
-plot(tree.results, uniform=TRUE, margin=.05)
-text(tree.results)
-summary(tree.results)
-# Draw the decision tree using fancyRpart and text tree
-fancyRpartPlot(tree.results)
+#decision tree results
+View(tree$cptable)
+summary(tree)
+#open and volume are important variables
 
-plot(tree.results, uniform=TRUE, margin=.05)
-text(tree.results)
-#make predictions on tree model
-tree_pred<- predict(tree.results, newdata=dfTest, type="class")
+#decision tree visualization
+fancyRpartPlot(tree)
+```
 
-#look at accuracy of model with the criterion of gini index
-confusionMatrix(tree_pred, dfTest$binary_result)
+Decision Tree Prediction
+```{r}
+#decision tree prediction
+treePrediction <- predict(tree, newdata = test, type = "class")
+```
 
-#misclassification table (the (0, 0) (1,1) diagonals are the correct classifications
-with(dfTest, table(tree_pred, binary_result))
+Decision Tree Hit Rate
+```{r}
+#decision tree true positive and true negative 
+treePredictionTable <- table(test$binary_result, treePrediction) 
+treePredictionTable
 
-#using the above table, we'll find the hit rate; true positive and true negative error rate
-hit_rate<-  (731+829)/ 2771
-hit_rate
-
-#use rmse as another value to predict accuracy. in order to calculate rmse, the actual and predicted values have to be numeric
-rmse_value<- rmse(as.numeric(dfTest$binary_result), as.numeric(tree_pred))
-rmse_value
+#decision tree confusion matrix
+confusionMatrix(treePrediction, test$binary_result)
+#decision tree hit rate is 49.06%, terrible
 ```

@@ -1,27 +1,26 @@
 ---
 title: "Using News and Market Data for to Predict Stock Movements"
-author: "Mary Gibbs and Peter Riley"
-date: "12/5/2018"
+course: "DATS 6101 Introduction to Data Science"
+authors: "Mary Gibbs and Peter Riley"
 output: ioslides_presentation
 editor_options: 
   
   chunk_output_type: console
 ---
 
+Set Up
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ##Question
 
-**Does news, including positive or negative coverage, and market data predict whether a company's stock will increase or decrease within a day?**
+**Can a combination of news data and market data predict whether a company's stock will increase or decrease within a day?**
 
 ##Data Source 
 ```{r, out.width="75%"}
 library(knitr)
-
 knitr::include_graphics('Data-Source.png')
-
 ```
 
 ##Data {.smaller}
