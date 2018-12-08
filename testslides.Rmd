@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ##Question
 
-**Can a combination of news data and market data predict whether a company's stock will increase or decrease within a day?**
+**Can a combination of news and market data predict whether a company's stock will increase or decrease within a day?**
 
 ##Data Source 
 ```{r, out.width="75%"}

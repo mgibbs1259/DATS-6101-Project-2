@@ -11,7 +11,7 @@ editor_options:
 Project Overview
 ----------------
 
-Research Question: Can a combinaton of news data and market data predict whether a company's stock will increase or decrease within a day?
+Research Question: Can a combinaton of news and market data predict whether a company's stock will increase or decrease within a day?
 
 Data Source: https://www.kaggle.com/c/two-sigma-financial-news/data
 
