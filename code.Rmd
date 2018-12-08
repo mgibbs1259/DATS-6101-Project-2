@@ -124,13 +124,13 @@ Stepwise Logistic Regression Model Prediction
 stepModelPrediction <- predict(stepModel, newdata = test, type = "response")
 ```
 
-Stepwise Logistic Regression Model Hit Rate
+Stepwise Logistic Regression Model Accuracy
 ```{r}
-#stepwise model hit rate
+#stepwise model accuracy
 stepModelPerLike <- ifelse(stepModelPrediction > 0.5, 1, 0)
-stepModelHitRate <- mean(stepModelPerLike == test$binary_result)
-stepModelHitRate
-#stepwise model hit rate is 47.40%, terrible
+stepModelAccuracy <- mean(stepModelPerLike == test$binary_result)
+stepModelAccuracy
+#stepwise model accuracy is 47.40%, terrible
 ```
 
 Stepwise Logistic Regression Model ROC Curve
@@ -171,7 +171,7 @@ Decision Tree Prediction
 treePrediction <- predict(tree, newdata = test, type = "class")
 ```
 
-Decision Tree Hit Rate
+Decision Tree Accuracy
 ```{r}
 #decision tree true positive and true negative 
 treePredictionTable <- table(test$binary_result, treePrediction) 
@@ -179,5 +179,5 @@ treePredictionTable
 
 #decision tree confusion matrix
 confusionMatrix(treePrediction, test$binary_result)
-#decision tree hit rate is 49.06%, terrible
+#decision tree accuracy is 49.06%, terrible
 ```
