@@ -121,9 +121,9 @@ plot(stepModelROCperf, xlab = "false positive rate", ylab = "true positive rate"
 #stepwise model ROC curve is terrible
 
 #stepwise model AUC
-bestModelAUC <- performance(bestModelROCpred, measure = "auc")
-bestModelAUC
-#stepwise model AUC is 0.4967, terrible
+stepModelAUC <- performance(stepModelROCpred, measure = "auc")
+stepModelAUC
+#stepwise model AUC is 0.4922, terrible
 ```
 
 Decision Tree
