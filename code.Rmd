@@ -128,9 +128,20 @@ stepModelAUC
 
 Decision Tree
 ```{r}
-#build model
-tree.results <- rpart(binary_result ~ time+sentimentClass+sentimentNegative+sentimentNeutral+sentimentPositive+bodySize+wordCount, data = training, control= rpart.control(cp=.005), method = "class")
+#load in necessary packages
+library(tree)
+library(rpart)
+library(rpart.plot)
+library(Metrics)
+library(rattle)
+library(RColorBrewer)
 
+
+#build model
+set.seed(1)
+tree.results <- rpart(binary_result ~ open+sentimentNegative+sentimentNeutral+sentimentPositive+bodySize+wordCount, data = training, control= rpart.control(maxdepth = 6), parms= list(split= 'gini'), method = "class")
+
+View(tree.results$cptable)
 plot(tree.results, uniform=TRUE, margin=.05)
 text(tree.results)
 summary(tree.results)
@@ -139,13 +150,20 @@ fancyRpartPlot(tree.results)
 
 plot(tree.results, uniform=TRUE, margin=.05)
 text(tree.results)
-#make predictions
+#make predictions on tree model
 tree_pred<- predict(tree.results, newdata=dfTest, type="class")
 
-#misclassification table (the (0, 0) (1,1) diagonals are the correct classifications)
+#look at accuracy of model with the criterion of gini index
+confusionMatrix(tree_pred, dfTest$binary_result)
+
+#misclassification table (the (0, 0) (1,1) diagonals are the correct classifications
 with(dfTest, table(tree_pred, binary_result))
 
-#using the table, we'll find the error 
-error_value<-  (1021+629)/ 2771
-error_value
+#using the above table, we'll find the hit rate; true positive and true negative error rate
+hit_rate<-  (731+829)/ 2771
+hit_rate
+
+#use rmse as another value to predict accuracy. in order to calculate rmse, the actual and predicted values have to be numeric
+rmse_value<- rmse(as.numeric(dfTest$binary_result), as.numeric(tree_pred))
+rmse_value
 ```
