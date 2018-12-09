@@ -1,7 +1,6 @@
 ---
 title: "Using News and Market Data for to Predict Stock Movements"
 author: "Mary Gibbs and Peter Riley"
-date: "12/5/2018"
 output: ioslides_presentation
 editor_options: 
   
@@ -12,99 +11,107 @@ editor_options:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-##Question
-
-**Does news, including positive or negative coverage, and market data predict whether a company's stock will increase or decrease within a day?**
-
-##Data Source 
-```{r, out.width="75%"}
-library(knitr)
-
-knitr::include_graphics('Data-Source.png')
-
-```
-
-##Data {.smaller}
-```{r, comment = ""}
-#read in data 
+```{r, include=FALSE}
 library(knitr)
 library(kableExtra)
+library(bestglm)
+library(car)
+library(caret)
+library(corrplot)
+library(dplyr)
+library(ggplot2)
+library(ISLR)
+library(MASS)
+library(Metrics)
+library(MLmetrics)
+library(pROC)
+library(pscl)
+library(rattle)
+library(RColorBrewer)
+library(ResourceSelection)
+library(rattle)
+library(rpart)
+library(rpart.plot)
+library(ROCR)
+library(tree)
+library(verification)
+```
+
+##Research Question {.bigger}
+
+<font size = "6.5">**Can a combination of news and market data predict whether a company's stock will increase or decrease within a day?**</font>
+
+##Data Source {.centered}
+
+```{r, out.width = "75%"}
+knitr::include_graphics('data.png')
+```
+
+18 variables & 13860 observations
+
+```{r, include=FALSE}
+#read in data 
 df <- read.csv('data/data.csv') 
 #remove X column
 df$X <- NULL 
 #check data
-#str(df)
+str(df)
 #change data types
 df$binary_result <- as.factor(df$binary_result)
 df$sentimentClass <- as.factor(df$sentimentClass)
 df$urgency <- as.factor(df$urgency)
 #check data
+str(df)
+```
+
+##Data Preparation{.smaller}
+```{r}
 head(df)%>%
 kable()%>%
 kable_styling(c("striped", "hover", "condensed", "responsive")) %>%
 scroll_box(width = "100%")
-
 ```
-##News EDA {.smaller}
-```{r, warning= F}
-library(knitr)
-library(kableExtra)
 
+##Exploratory Data Analysis {.smaller}
+```{r, warning = F}
+#correlation matrix
+dfCorrMatrix <- cor(df[, c(4:7, 11:13, 15:18)], method = "pearson")
+#correlation plot 
+corrplot(dfCorrMatrix, method = "square", addCoef.col = "black", number.cex = 7/ncol(df))
 ```
-##Market EDA
 
-##Logistic Regression 
+##Test/Train
 ```{r}
-
+#create df w/o highly correlated features
+dfLogModel <- df[, c(4:5, 8:16)]
+#get 80% train
+train <- dfLogModel[1:11088, ]
+#get 20% test
+test <- dfLogModel[11089:13860, ]
+#Removed highly correlated features
+#Split data for models
+#-80% train
+#-20% test
 ```
-##Logistic Regression Hit Rate and ROC
 
-##Decision Tree Hit Rate and ROC
+##Models
 ```{r}
-
+#Stepwise logistic regression
+#Decision tree
 ```
 
+##Decision Tree 
 ```{r}
-
-
+#decision tree
+set.seed(1)
+tree <- rpart(binary_result ~ volume + open + provider + sentimentClass + sentimentNegative + sentimentNeutral + sentimentPositive + urgency + firstMentionSentence + bodySize, data = train, control = rpart.control(maxdepth = 6), method = "class")
+#decision tree visualization
+fancyRpartPlot(tree)
 ```
+
 ##Conclusion
 ```{r}
-
+#For both models,open and volume were important variables
+#Accuracy for stepwise logisitc regression was 47.40%, while decision tree was 49.06%
+#News data is not a good predictor of stock movements 
 ```
-
-```
-
-```
-
-```
-
-
-
-```
-
-
-
-```{r}
-
-```
-
-
-## Slide with Bullets
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
-```
-
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
-
