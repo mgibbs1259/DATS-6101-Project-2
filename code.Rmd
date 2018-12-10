@@ -7,23 +7,28 @@ editor_options:
   chunk_output_type: console
 ---
 
-----------------
-Project Overview
-----------------
+--------
+Question
+--------
+
+Both of us are interested in the intersection of financial markets and news/social media. Initially, we wanted to model social media influence on IPO financial performance, but we were unable to obtain the data via Bloomberg Terminal. Therefore, we decided to model news influence on stock movements, utilizing data from Two Sigma.
 
 Research Question: Can a combinaton of news and market data predict whether a company's stock will increase or decrease within a day?
 
-Data Source: https://www.kaggle.com/c/two-sigma-financial-news/data
+----
+Data  
+----
 
-----------------
-Data Preparation
-----------------
+We gathered a data subset from Kaggle - Two Sigma: Using News to Predict Stock Movements. Using a Kaggle Kernel and Python, we selected dates/features of interest and created a binary result column with 1 indicating a gain or stable and 0 indicating a loss. Using R, we read in the data, cleaned the data, and changed the data types. 
+
+Data Source: https://www.kaggle.com/c/two-sigma-financial-news/data
 
 Packages
 ```{r}
 library(bestglm)
 library(car)
 library(caret)
+library(caTools)
 library(corrplot)
 library(dplyr)
 library(ggplot2)
@@ -47,7 +52,7 @@ library(verification)
 Clean Data
 ```{r}
 #read in data 
-df <- read.csv("data/data.csv") 
+df <- read.csv("data.csv") 
 #remove X column
 df$X <- NULL 
 #check data
@@ -58,7 +63,6 @@ df$sentimentClass <- as.factor(df$sentimentClass)
 df$urgency <- as.factor(df$urgency)
 #check data
 str(df)
-head(df)
 ```
 
 Multicollinearity
@@ -68,19 +72,21 @@ dfCorrMatrix <- cor(df[, c(4:7, 11:13, 15:18)], method = "pearson")
 #correlation plot 
 corrplot(dfCorrMatrix, method = "square", addCoef.col = "black", number.cex = 7/ncol(df))
 #create df w/o highly correlated features
-dfLogModel <- df[, c(4:5, 8:16)]
+dfModel <- df[, c(4:5, 8:16)]
 ```
 
-------
-Models
-------
+-----
+Model
+-----
+
+We are interested in whether news characteristics/sentiment and market information can predict stock movements (gain/stable or loss). Therefore, we decided to try both logistic regression and decision tree since they are classification algorithms that are commonly used to predict binary outcomes. 
 
 Test/Train
 ```{r}
 #get 80% train
-train <- dfLogModel[1:11088, ]
+train <- dfModel[1:11088, ]
 #get 20% test
-test <- dfLogModel[11089:13860, ]
+test <- dfModel[11089:13860, ]
 ```
 
 Logistic Regression
@@ -181,3 +187,9 @@ treePredictionTable
 confusionMatrix(treePrediction, test$binary_result)
 #decision tree accuracy is 49.06%, terrible
 ```
+
+-------------------
+Predictions/Results
+-------------------
+
+For both models, the market variables open and volume were important, while the news variables were insignificant. The decision tree accuracy (49.06%) was greater than the logistic regression accuracy (47.40%). However, for both models, accuracy was less than 50%, making randomly guessing an almost equivalent option. Ultimately, the news characteristics/sentiment and the market information were terrible predictors of stock movements.
