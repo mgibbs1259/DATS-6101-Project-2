@@ -80,7 +80,15 @@ dfCorrMatrix <- cor(df[, c(4:7, 11:13, 15:18)], method = "pearson")
 corrplot(dfCorrMatrix, method = "square", addCoef.col = "black", number.cex = 7/ncol(df))
 ```
 
-##Test/Train
+##Test/Train {.bigger}
+###Removed highly correlated features
+
+###Split data for models:
+
+ - **80% train**
+
+ - **20% test**
+
 ```{r}
 #create df w/o highly correlated features
 dfLogModel <- df[, c(4:5, 8:16)]
@@ -88,16 +96,16 @@ dfLogModel <- df[, c(4:5, 8:16)]
 train <- dfLogModel[1:11088, ]
 #get 20% test
 test <- dfLogModel[11089:13860, ]
-#Removed highly correlated features
-#Split data for models
-#-80% train
-#-20% test
+
 ```
 
 ##Models
+
+###**Stepwise logistic regression**
+
+###**Decision tree**
 ```{r}
-#Stepwise logistic regression
-#Decision tree
+
 ```
 
 ##Decision Tree 
@@ -109,9 +117,11 @@ tree <- rpart(binary_result ~ volume + open + provider + sentimentClass + sentim
 fancyRpartPlot(tree)
 ```
 
-##Conclusion
+##Conclusion {.bigger}
+
+- For both models,open and volume were important variables
+- Accuracy for stepwise logisitc regression was 47.40%, while decision tree was 49.06%
+- News data is not a good predictor of stock movements 
 ```{r}
-#For both models,open and volume were important variables
-#Accuracy for stepwise logisitc regression was 47.40%, while decision tree was 49.06%
-#News data is not a good predictor of stock movements 
+
 ```
