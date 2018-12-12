@@ -64,7 +64,7 @@ df$urgency <- as.factor(df$urgency)
 str(df)
 ```
 
-##Data Preparation{.smaller}
+##Data Preparation {.smaller}
 
 ```{r}
 head(df)%>%
@@ -107,9 +107,9 @@ test <- dfModel[11089:13860, ]
 
 **Decision tree**
 
-##Decision Tree
+##Decision Tree {.centered}
 
-```{r, out.width = "80%", out.height= "80%"}
+```{r, out.width ="80%", out.height="80%"}
 #decision tree
 set.seed(1)
 tree <- rpart(binary_result ~ volume + open + provider + sentimentClass + sentimentNegative + sentimentNeutral + sentimentPositive + urgency + firstMentionSentence + bodySize, data = train, control = rpart.control(maxdepth = 6), method = "class")

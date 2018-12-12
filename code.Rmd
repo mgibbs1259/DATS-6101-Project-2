@@ -115,9 +115,9 @@ stepModel <- fullModel %>% stepAIC(trace = TRUE)
 
 #stepwise model summary
 summary(stepModel)
-#volume and open are statistically significant (p-value < 0.05), contribute to model
+#open and volume are statistically significant (p-value < 0.05), contribute to model
 #null deviance is 15345 and residual deviance is 15237, terrible reduction
-#AIC is 15271
+#AIC is 15271, better than full model
 
 #stepwise model VIF
 vif(stepModel)
@@ -168,16 +168,16 @@ summary(tree)
 #open and volume are important variables
 
 #decision tree visualization
-png("tree.png", width = 1000, height= 600)
-post(tree, file = "", title= "Decision Tree")
+png("tree.png", width = 1000, height = 600)
+post(tree, file = "", title = "Decision Tree")
 dev.off()
-
 ```
 
 Decision Tree Prediction
 ```{r}
 #decision tree prediction
 treePrediction <- predict(tree, newdata = test, type = "class")
+#open and volume are important variables
 ```
 
 Decision Tree Accuracy
@@ -195,6 +195,4 @@ confusionMatrix(treePrediction, test$binary_result)
 Predictions/Results
 -------------------
 
-For both models, the market variables open and volume were important, while the news variables were insignificant. From the decision tree,   
-
-The decision tree accuracy (49.06%) was greater than the logistic regression accuracy (47.40%). However, for both models, accuracy was less than 50%, making randomly guessing an almost equivalent option. Ultimately, the news characteristics/sentiment and the market information were terrible predictors of stock movements.
+For both models, the market variables open and volume were important, while the news variables were insignificant. The decision tree accuracy (49.06%) was greater than the logistic regression accuracy (47.40%). However, for both models, accuracy was less than 50%, making randomly guessing an almost equivalent option. Ultimately, the news characteristics/sentiment and the market information were terrible predictors of stock movements.
