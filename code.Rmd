@@ -192,4 +192,6 @@ confusionMatrix(treePrediction, test$binary_result)
 Predictions/Results
 -------------------
 
-For both models, the market variables open and volume were important, while the news variables were insignificant. The decision tree accuracy (49.06%) was greater than the logistic regression accuracy (47.40%). However, for both models, accuracy was less than 50%, making randomly guessing an almost equivalent option. Ultimately, the news characteristics/sentiment and the market information were terrible predictors of stock movements.
+For both models, the market variables open and volume were important, while the news variables were insignificant. From the decision tree,   
+
+The decision tree accuracy (49.06%) was greater than the logistic regression accuracy (47.40%). However, for both models, accuracy was less than 50%, making randomly guessing an almost equivalent option. Ultimately, the news characteristics/sentiment and the market information were terrible predictors of stock movements.
