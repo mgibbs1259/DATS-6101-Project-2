@@ -107,14 +107,14 @@ test <- dfModel[11089:13860, ]
 
 **Decision tree**
 
-##Decision Tree 
+##Decision Tree
 
-```{r}
+```{r, out.width = "80%", out.height= "80%"}
 #decision tree
 set.seed(1)
 tree <- rpart(binary_result ~ volume + open + provider + sentimentClass + sentimentNegative + sentimentNeutral + sentimentPositive + urgency + firstMentionSentence + bodySize, data = train, control = rpart.control(maxdepth = 6), method = "class")
 #decision tree visualization
-fancyRpartPlot(tree)
+knitr::include_graphics('tree.png')
 ```
 
 ##Conclusion {.bigger}

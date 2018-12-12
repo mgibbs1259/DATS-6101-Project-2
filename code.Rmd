@@ -168,7 +168,10 @@ summary(tree)
 #open and volume are important variables
 
 #decision tree visualization
-fancyRpartPlot(tree)
+png("tree.png", width = 1000, height= 600)
+post(tree, file = "", title= "Decision Tree")
+dev.off()
+
 ```
 
 Decision Tree Prediction
